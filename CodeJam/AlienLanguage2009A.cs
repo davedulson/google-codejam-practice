@@ -10,14 +10,12 @@ namespace CodeJam
     {
         private HashSet<string> words;
         private List<Pattern> patternsToMatch;
-        private int currentlyProcessing;
         private string file_to_process;
 
         public AlienLanguage2009A()
         {
             this.words = new HashSet<string>();
             this.patternsToMatch = new List<Pattern>();
-            this.currentlyProcessing = 0;
         }
 
         public AlienLanguage2009A( string file ) : this()
