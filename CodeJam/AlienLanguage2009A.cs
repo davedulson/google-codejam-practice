@@ -46,7 +46,18 @@ namespace CodeJam
 
                 for (int i = 0; i < dictionary_lines; i++)
                 {
-                    words.Add( f.ReadLine() );
+                    string word = f.ReadLine();
+                    for (int j = 0; j <= word_length; j++)
+                    {
+                        string partial_word = word.Substring( 0, j );
+
+                        /* Construct a set of all the words (partial and full) */
+                        if (!words.Contains( partial_word ))
+                        {
+                            words.Add( partial_word );
+                        }
+
+                    }
                 }
 
                 for (int i = 0; i < test_cases; i++)
