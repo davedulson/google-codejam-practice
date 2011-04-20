@@ -78,21 +78,16 @@ namespace CodeJam
             for (int i = 0; i < patternsToMatch.Count; i++)
             {
                 int matches = 0;
-                List<string> potentials = patternsToMatch[i].getAllPotentials();
+                matches = patternsToMatch[i].getMatches( words );
 
-                foreach (string s in potentials)
-                {
-                    if (words.Contains( s )) matches++;
-                }
-
-                System.Console.WriteLine( "Case #{0}: {1}", i, matches );
+                output.Write( string.Format( "Case #{0}: {1}\r\n", i + 1, matches ) );
             }
-
+            output.Flush();
         }
 
         public class Pattern
         {
-            private List<Token> tokens;            
+            private List<Token> tokens;
 
             public Pattern( int num_tokens )
             {
@@ -102,13 +97,12 @@ namespace CodeJam
             public Pattern( string p, int num_tokens )
                 : this( num_tokens )
             {
+                /* Only 1 level deep, so bool is OK */
                 bool nested = false;
                 Token t = null;
 
                 foreach (char c in p)
                 {
-                    /* Only 1 level deep, so bool is OK */
-
                     if (c == '(')
                     {
                         /* Open a new token */
@@ -138,7 +132,6 @@ namespace CodeJam
                         }
                     }
                 }
-
             }
 
             private class Token
@@ -169,9 +162,9 @@ namespace CodeJam
                 tokens.Add( newToken );
             }
 
-            public List<String> getAllPotentials()
+            public int getMatches( HashSet<string> words )
             {
-                return getPotentials( "", tokens );
+                return getMatches( words, "", tokens );
             }
 
             /// <summary>
@@ -180,63 +173,35 @@ namespace CodeJam
             /// <param name="partial"></param>
             /// <param name="tokens"></param>
             /// <returns></returns>
-            private List<String> getPotentials( String partial, List<Token> tokens )
+            private int getMatches( HashSet<string> words, String partial, List<Token> tokens )
             {
-                List<String> partials = new List<String>();
-                List<String> potentials = new List<String>();
+
+                int matches = 0;
 
                 if (tokens.Count > 0)
                 {
-                    foreach (char c in tokens[0].letters)
-                    {
-                        partials.Add( String.Concat( partial + c ) );
-                    }
-
+                    Token oldToken = tokens[0];
                     tokens.RemoveAt( 0 );
 
-                    if (tokens.Count > 0)
+                    foreach (char c in oldToken.letters)
                     {
-                        foreach (String s in partials)
+                        string s = String.Concat( partial, c );
+
+                        /* Check if partial (or full) word is a match */
+                        if (words.Contains( s ))
                         {
-                            // Copy the list to ensure it's not affected for future runs
-                            potentials.AddRange( getPotentials( s, new List<Token>( tokens ) ) );
+                            if (tokens.Count > 0)
+                            {
+                                matches += getMatches( words, s, new List<Token>( tokens ) );
+                            }
+                            else
+                            {
+                                matches++;
+                            }
                         }
                     }
-                    else
-                    {
-                        potentials = partials;
-                    }
                 }
-                return potentials;
-            }
-
-            public static void recursionTest( string[] args )
-            {
-                AlienLanguage2009A.Pattern pattern = new AlienLanguage2009A.Pattern( 3 );
-
-                pattern.tokens.Add( new AlienLanguage2009A.Pattern.Token() );
-                pattern.tokens.Add( new AlienLanguage2009A.Pattern.Token() );
-                pattern.tokens.Add( new AlienLanguage2009A.Pattern.Token() );
-
-                pattern.tokens[0].letters.Add( 'a' );
-                pattern.tokens[0].letters.Add( 'b' );
-
-                pattern.tokens[1].letters.Add( 'd' );
-
-                pattern.tokens[2].letters.Add( 'd' );
-                pattern.tokens[2].letters.Add( 'c' );
-
-                List<String> potentials = pattern.getAllPotentials();
-
-                /* We should get output add, adc, bdd, bdc here */
-
-                foreach (String potential in potentials)
-                {
-                    System.Console.WriteLine( potential );
-                }
-
-                System.Console.Read();
-
+                return matches;
             }
         }
     }
