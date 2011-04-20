@@ -11,6 +11,7 @@ namespace CodeJam
         private HashSet<string> words;
         private List<Pattern> patternsToMatch;
         private string file_to_process;
+        private TextWriter output;
 
         public AlienLanguage2009A()
         {
@@ -18,9 +19,11 @@ namespace CodeJam
             this.patternsToMatch = new List<Pattern>();
         }
 
-        public AlienLanguage2009A( string file ) : this()
+        public AlienLanguage2009A( string file, TextWriter output )
+            : this()
         {
             this.file_to_process = file;
+            this.output = output;
         }
 
         public bool parseFile()

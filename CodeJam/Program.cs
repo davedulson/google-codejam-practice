@@ -1,28 +1,36 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.IO;
 using System.Text;
 
 namespace CodeJam
 {
     class Program
     {
+        static string homedir = Environment.ExpandEnvironmentVariables( "%HOMEDRIVE%%HOMEPATH%/" );
         static void Main(string[] args)
         {
-            runAlienLanguage();
+            bool debug = false;
 
+            TextWriter output;
 
+            if (debug)
+            {
+                output = System.Console.Out;
+            }
+            else
+            {
+                output = new StreamWriter( string.Concat( homedir, "/Desktop/output.txt" ) );
+            }
 
-
+            runAlienLanguage( output );
         }
 
-        static void runAlienLanguage()
+        static void runAlienLanguage( TextWriter output )
         {
-            string input = Environment.ExpandEnvironmentVariables( "%HOMEDRIVE%%HOMEPATH%" );
+            string input = string.Concat( homedir, "/Downloads/codeJam/alien/A-large-practice.in" );
 
-            input = String.Concat( input, "/Downloads/codeJam/alien/A-small-practice.in" );
-
-            AlienLanguage2009A alien = new AlienLanguage2009A( input );
+            AlienLanguage2009A alien = new AlienLanguage2009A( input, output );
 
             alien.parseFile();
 
