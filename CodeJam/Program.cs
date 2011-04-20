@@ -7,28 +7,33 @@ namespace CodeJam
 {
     class Program
     {
-        static string homedir = Environment.ExpandEnvironmentVariables( "%HOMEDRIVE%%HOMEPATH%/" );
-        static void Main(string[] args)
+        static string desktop = Environment.GetFolderPath( Environment.SpecialFolder.DesktopDirectory );
+        static void Main( string[] args )
         {
-            bool debug = false;
-
             TextWriter output;
 
-            if (debug)
+            if (args.Length > 2 && args[2].Equals( "debug" ))
             {
                 output = System.Console.Out;
             }
             else
             {
-                output = new StreamWriter( string.Concat( homedir, "/Desktop/output.txt" ) );
+                output = new StreamWriter( string.Concat( desktop, "/output.txt" ) );
             }
 
-            runAlienLanguage( output );
+            switch (args[0])
+            {
+                case "alien":
+                    runAlienLanguage( args[1], output );
+                    break;
+                default:
+                    System.Console.WriteLine( "Unknown problem: {0}", args[0] );
+                    break;
+            }
         }
 
-        static void runAlienLanguage( TextWriter output )
+        static void runAlienLanguage( string input, TextWriter output )
         {
-            string input = string.Concat( homedir, "/Downloads/codeJam/alien/A-large-practice.in" );
 
             AlienLanguage2009A alien = new AlienLanguage2009A( input, output );
 
